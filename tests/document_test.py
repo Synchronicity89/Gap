@@ -423,7 +423,7 @@ class MyTest(unittest.TestCase):
         self.assertTrue(quality > 0)
         self.assertTrue(os.path.isfile("scan1.png"))
         l = len(document.pages[0])
-        self.assertTrue(l >= 97 and l <= 110)
+        self.assertTrue(l >= 93 and l <= 110)
         os.remove("scan1.txt")
         os.remove("scan1.pdf")
         os.remove("scan1.png")
@@ -486,7 +486,6 @@ class MyTest(unittest.TestCase):
         os.remove("text1.txt")
         os.remove("text1.jpg")
         os.remove("text1.json")
-        
     def test_050(self): 
         """ Document - TIF text """
         document = Document("files/6page.tif", "./")
