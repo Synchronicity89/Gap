@@ -27,3 +27,5 @@ report.ipynb
 /.vscode
 /imagenet/.vscode
 /imagenet
+*.noseids
+/nosetests.xml
