@@ -5,13 +5,22 @@ Autor: David Molina @virtualdvid
 
 from setuptools import setup, find_packages
 
-try: # for pip >= 10
-        from pip._internal.req import parse_requirements
-except ImportError: # for pip <= 9.0.3
-        from pip.req import parse_requirements
+#setup components
+with open('README.md', 'r', encoding="utf-8") as f:
+    long_description = f.read()
 
-install_reqs = parse_requirements(
-    'requirements/requirements.txt', session='hack')
+install_requires = [
+    'beautifulsoup4==4.6.3',
+    'numpy==1.15.1',
+    'h5py==2.8.0',
+    'imutils==0.5.1',
+    'Unidecode==1.0.22',
+    'nltk==3.3',
+    'pandas==0.23.4',
+    'requests==2.19.1',
+    'opencv-python==3.4.3.18',
+    'Pillow==5.2.0',
+    'matplotlib==2.2.3']
 
 tests_require=[
     'pytest',
@@ -42,16 +51,16 @@ classifiers=[
 
 setup(
     name='gapml',
-    version='0.9.3',
+    version='0.9.4',
     description='NLP and CV Data Engineering Framework',
     author='Andrew Ferlitsch',
     author_email='aferlitsch@gmail.com',
     license='Apache 2.0',
     url='https://github.com/andrewferlitsch/Gap',
     project_urls=project_urls,
-    long_description=open('README.md').read()
+    long_description=long_description,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-    install_requires=[str(ir.req) for ir in install_reqs],
+    install_requires=install_requires,
     tests_require=tests_require,
     package_data=package_data,
     classifiers=classifiers
