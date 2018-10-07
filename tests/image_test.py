@@ -14,11 +14,12 @@ import numpy as np
 class MyTest(unittest.TestCase):
         
     def setup_class(self):
+        os.chdir("./tests")
         self.isdone = False
         self.isbad  = False
             
     def teardown_class(self):
-        pass
+        os.chdir("..")
         
     ### Image
     

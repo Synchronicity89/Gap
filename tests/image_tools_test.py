@@ -7,10 +7,10 @@ import shutil
 class MyTest(unittest.TestCase):
 
     def setup_class(self):
-        pass
+        os.chdir("./tests")
 
     def teardown_class(self):
-        pass
+        os.chdir("..")
 
     def test_001(self):
         """ ImgUtils Constructor - directory = not a string """
