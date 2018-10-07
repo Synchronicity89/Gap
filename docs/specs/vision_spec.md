@@ -14,12 +14,14 @@ The Images CV preprocessor contains the following primary classes, and their rel
 ```python
 images = Images([<list of images>], [<list_of_labels>], flags …)
 ```
-    Alternately, the list of images can be a list of directories which contain images.
-    Alternately, the list of images can be a list of URLs of remotely stored images.
-    Alternately, the list of images can be a multi-dimensional numpy array (where the first dimension is the number of images).
-    Alternately, the list of images can be a list of multi-dimensional numpy arrays.
-    Alternately, the list of labels maybe a single value; in which case, the label applies to all the images.
-    Alternately, the list of labels maybe a numpy 1D (not one-hot encoded) vector or 2D (one-hot encoded) matrix.
+    Alternately, the images parameter can be a list of directories which contain images.
+    Alternately, the images parameter can be a list of URLs of remotely stored images.
+    Alternately, the images paramter can be a multi-dimensional numpy array (where the first dimension is the number of images).
+    Alternately, the images parameter can be a list of multi-dimensional numpy arrays.
+    Alternately, the images parameter maybe a string which is a directory of images.
+    Alternately, the images parameter maybe a string which is a directory of subdirectories, containing images.
+    Alternately, the labels parameter maybe a single value; in which case, the label applies to all the images.
+    Alternately, the labels parameter maybe a numpy 1D (not one-hot encoded) vector or 2D (one-hot encoded) matrix.
 
 + **Image** – This is the base class for the representation of a single Computer Vision (CV). The constructor optionally takes as parameters an image (path), corresponding label, and flags for CV preprocessing the image.
 
@@ -34,7 +36,7 @@ Fig. 1a High Level view of `Images` Class Object Relationships
 **Synopsis**
 
 ```python
-Images(images=None, labels= None, dir=’./’, name=None, ehandler=None, config=None)
+Images(images=None, labels=None, dir=’./’, name=None, ehandler=None, config=None)
 ```
 
 **Parameters**
@@ -43,10 +45,40 @@ Images(images=None, labels= None, dir=’./’, name=None, ehandler=None, config
 1.	local image files.
 2.	remote image files (i.e., http[s]://….).
 3.	directories of local image files.
-4.	or a multi-dimensional numpy array.
-5. 	or a list of multi-dimensional numpy arrays.
+4.	a multi-dimensional numpy array.
+5. 	a list of multi-dimensional numpy arrays.
 
 For a single multi-dimensional numpy array, the first dimension are the individual images. For example, the Tensorflow training set for MNIST data is a numpy array of shape (55000, 784). When passed as the `images` parameter it would be treated as 55,000 images of a 1D vector size 784 pixels.
+
+If a single directory is specified as the images parameter, it may alternately be specified as a string, vs. a string with a list:
+
+```python
+Images('birds', 1)
+# is the same as:
+Images(['birds'], 1)
+```
+
+In the case of a single directory, all the files under the subdirectory are images, or are subdirectories of images. In the former case, the images are assigned label(s) according to the `label` parameter. 
+
+In the case of subdirectories of images, each subdirectory is considered a separate class, and the `label` parameter maybe `None` (but otherwise ignored). Each subdirectory is assigned an integer label chronologically starting at zero. In the example below, the classes would be *cats* and *dogs*, and assigned the integer labels 0 and 1, respectively.
+
+```
+dataset\
+	cats\
+		image1.jpg
+		image2.jpg
+	dogs\
+		image3.jpg
+		image4.jpg
+```
+
+The above dataset can be specified as follows:
+
+```python
+Images('dataset', None)
+```
+
+The class mapping (e.g., cats = 0, dogs = 1) is stored as metadata in the HDF5 stored file, and can be access via the property `classes`.
 
 **labels:** If not `None`, either:  
 1.	A single integer value (i.e., label) which corresponds to all the images.  
@@ -207,7 +239,24 @@ labels = images.labels
 
 When used as a getter the property returns the label or list of labels for the collection.
 
-#### 1.3.5 time
+#### 1.3.5 classes
+
+**Synopsis**
+
+```python
+# Getter
+classes = images.classes
+```
+
+**Usage**
+
+When used as a getter the property returns the class mapping as a list of tuples of class names and their corresponding integer labels. If their is no class mapping, the property will return `None`. Below is an example.
+
+```
+('cats', 0), ('dogs', 1) ]
+```
+
+#### 1.3.6 time
 
 **Synopsis**
 
@@ -220,7 +269,7 @@ secs = images.time
 
 When used as a getter the property returns the amount of time (in seconds) it took to preprocess the collection into machine learning ready data.
 
-#### 1.3.6 elapsed
+#### 1.3.7 elapsed
 
 **Synopsis**
 
@@ -233,7 +282,7 @@ elapsed = images.elapsed
 
 When used as a getter the property returns the amount of time it took to preprocess the collection into machine learning ready data, in the form HH:MM:SS.
  
-#### 1.3.7 split
+#### 1.3.8 split
 
 **Synopsis**
 
@@ -261,7 +310,7 @@ A `TypeError` is raised if the type of the parameter is not the expected type.
 A `ValueError` is raised if a parameter is out of range.  
 A `AttributeError` is raised if the number of parameters passed to the setter property is incorrect.
 
-#### 1.3.8 minibatch
+#### 1.3.9 minibatch
 
 **Synopsis**
 
@@ -286,7 +335,7 @@ If the `augment` property is set to True, for each image in the training set, an
 A `TypeError` is raised if the type of the parameter is not the expected type.  
 A `ValueError` is raised if the batch_size is out of range.
 
-#### 1.3.9 augment
+#### 1.3.10 augment
 
 **Synopsis**
 
@@ -314,7 +363,7 @@ The parameter to the `augment` property may also be a tuple. The tuple specifies
 
 A `TypeError` is raised if the type of the parameter is not the expected type.
 
-#### 1.3.10 flatten
+#### 1.3.11 flatten
 
 ```python
 images.flatten = True | False
@@ -330,7 +379,7 @@ When used as a setter and set to `False`, the machine learning ready data is unf
 
 A `TypeError` is raised if the type of the parameter is not the expected type.
 
-#### 1.3.11 resize
+#### 1.3.12 resize
 
 ```python
 images.resize = (height, width)
@@ -345,7 +394,7 @@ When used as a setter, the machine learning ready data is resized to the specifi
 A `TypeError` is raised if the type of the parameter is not the expected type.
 A `AttributeError` is raised if the parameter is not a tuple of length 2.
 
-#### 1.3.12 pixeltype
+#### 1.3.13 pixeltype
 
 ```python
 ptype = images.pixeltype
@@ -355,7 +404,7 @@ ptype = images.pixeltype
 
 When used as a getter, the property returns the data type of the pixel data of the preprocessed machine learning ready data.
 
-#### 1.3.13 fail
+#### 1.3.14 fail
 
 ```python
 nfailed = images.fail
@@ -365,7 +414,7 @@ nfailed = images.fail
 
 When used as a getter, the property returns the number of images in the collection that failed to be preprocessed into machine learning ready data.
 
-#### 1.3.14 errors
+#### 1.3.15 errors
 
 ```python
 errors = images.errors
@@ -877,7 +926,9 @@ A `ValueError` is raised if the degree is not between 0 and 360.
 2.	Added raw setting to config parameter.
 3. 	Added float setting to config parameter.
 4.	Added transformation property flatten.
-5.	Added support for numpy arrays as image collections to Images.
-6.	Added support for 16-bit pixels.
+
+**Gap v0.9.4 (beta)**
+1.	Added support for numpy arrays as image collections to Images.
+2.	Added support for 16-bit pixels.
 
 Copyright ©2018, Epipog, All Rights Reserved
