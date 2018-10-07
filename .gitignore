@@ -9,13 +9,17 @@ site/
 templates/
 
 .ipynb_checkpoints/
-flower_photos_spl/
-flower_photos_spt/
+flower_photos/
+flower_photos_t2/
 flower.h5
 flower2.h5
 flower.jpg
 flower2.jpg
 move_files.ipynb
+report.ipynb
+h5_test.ipynb
+Gap_Next.ipynb
+
 sessionHeck.ipynb
 train/tut_files/
 report.ipynb
@@ -34,3 +38,5 @@ report.ipynb
 /imagenet
 *.noseids
 /nosetests.xml
+gapml/vision2.py
+tests/Testing_Dics.ipynb
